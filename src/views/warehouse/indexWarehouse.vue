@@ -1,5 +1,5 @@
 <template>
   <div>
-    首页
+    仓库首页
   </div>
 </template>

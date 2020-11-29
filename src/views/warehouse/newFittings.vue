@@ -1,5 +1,5 @@
 <template>
   <div>
-    首页
+    配件入仓
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
   <div>
-    首页
+    汽车档案首页
   </div>
 </template>

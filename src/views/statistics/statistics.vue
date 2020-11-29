@@ -1,5 +1,5 @@
 <template>
   <div>
-    首页
+    利润统计
   </div>
 </template>
