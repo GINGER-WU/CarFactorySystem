@@ -8,8 +8,11 @@
                 <br>
                 <Content :style="{padding: '0 20px'}">
                     <Card>
+
                         <div style="min-height: 200px;">
-                            <router-view></router-view>
+                            <transition name="slide-fade">
+                                <router-view></router-view>
+                            </transition>
                         </div>
                     </Card>
                 </Content>
@@ -61,4 +64,15 @@
     .layout-footer-center {
         text-align: center;
     }
+    .slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active for below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
 </style>
