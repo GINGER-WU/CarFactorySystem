@@ -119,4 +119,18 @@ const router = new VueRouter({
   mode:"history",
 })
 
+// 部分代码省略
+import ViewUI from 'view-design';
+
+router.beforeEach((to, from, next) => {
+    ViewUI.LoadingBar.start();
+    next();
+});
+
+router.afterEach(route => {
+    ViewUI.LoadingBar.finish();
+});
+
+
+
 export default router

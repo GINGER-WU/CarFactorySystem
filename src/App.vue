@@ -78,7 +78,7 @@
                 })
                 return temps;
             }
-        }
+        },
     }
 </script>
 <style scoped>
