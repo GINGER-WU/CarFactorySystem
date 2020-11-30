@@ -2,12 +2,12 @@
     <div>
     <Menu mode="horizontal" :theme="theme1" active-name="index">  
         <MenuItem to="/home" name="index">
-            <Icon type="ios-home" />
+            <Icon size="25" type="ios-home-outline" />
             首页
         </MenuItem>
         <Submenu name="carfile">
             <template slot="title">
-                <Icon type="ios-folder" />
+                <Icon size="25" type="ios-folder-outline" />
                 汽车档案
             </template>
             <MenuGroup title="档案操作">
@@ -17,7 +17,7 @@
         </Submenu>
         <Submenu name="warehouse">
             <template slot="title">
-                <Icon type="ios-cube" />
+                <Icon size="25" type="ios-cube-outline" />
                 配件仓库
             </template>
             <MenuGroup title="配件操作">
@@ -27,7 +27,7 @@
         </Submenu>
         <Submenu name="worker">
             <template slot="title">
-                <Icon type="md-contacts" />
+                <Icon size="25" type="ios-contact-outline" />
                 员工管理
             </template>
             <MenuGroup title="员工操作">
@@ -36,10 +36,10 @@
             </MenuGroup>
         </Submenu>
         <MenuItem to="statistics" name="Statistics">
-            <Icon type="ios-stats" />
+            <Icon size="25" type="ios-stats-outline" />
            利润统计
         </MenuItem>
-        <Button style="margin-left: 58%;" @click="value1 = true" type="primary">
+        <Button style="margin-left: 53%;" @click="value1 = true" type="primary">
             <Icon type="md-person" />
             user
         </Button>
@@ -64,6 +64,6 @@
                 color:['#f56a00', '#7265e6', '#ffbf00', '#00a2ae'],
                 user:'James'
             }
-        }
+        },
     }
 </script>

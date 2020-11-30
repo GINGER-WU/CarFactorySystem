@@ -6,10 +6,15 @@
                     <topbar></topbar>
                 </Header>
                 <br>
-                <Content :style="{padding: '0 20px'}">
+                <Content :style="{padding: '0 100px'}">
+                    <Breadcrumb separator=">>>">
+                        <BreadcrumbItem v-for="(name,index) in matchedArr" :key='index'>
+                            {{name}}
+                        </BreadcrumbItem>
+                    </Breadcrumb>
+                    <br>
                     <Card>
-
-                        <div style="min-height: 200px;">
+                        <div style="min-height: 720px;">
                             <transition name="slide-fade">
                                 <router-view></router-view>
                             </transition>
@@ -27,11 +32,52 @@
     export default {
         data() {
             return {
-                value: [20, 50]
             }
         },
         components: {
             topbar,
+        },
+        // computed: {
+        //     matchedArr() {
+        //         let temps = [];
+        //         let temp = [];
+        //         let tem = [];
+        //         let end1 = '';
+        //         this.$route.matched.filter((item, index, self) => {
+        //             if (item.path) {
+        //                 let name = item.path;
+        //                 temp.push(name);
+        //             }
+        //         });
+        //         temp.filter((item, index, self) => {
+        //             if (!temps.includes(item)) {
+        //                 temps.push(item);
+        //             }
+        //         })
+        //         end1 = temps[temps.length-1];
+        //         return tem;
+        //     },
+        // }
+        computed: {
+            matchedArr() {
+                let temp = [], temps = [];
+                this.$route.matched.filter((item, index, self) => {
+                    // if(item.meta.title){
+                    //     const title = item.meta.title;
+                    //     temp.push(title);
+                    // }
+                    if (item.name) {
+                        const name = item.name;
+                        temp.push(name);
+                    }
+                });
+                temp.filter((item, index, self) => {
+                    if (!temps.includes(item)) {
+                        temps.push(item);
+                    }
+                })
+                return temps;
+            }
         }
     }
 </script>
@@ -64,15 +110,21 @@
     .layout-footer-center {
         text-align: center;
     }
+
     .slide-fade-enter-active {
-  transition: all .3s ease;
-}
-.slide-fade-leave-active {
-  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active for below version 2.1.8 */ {
-  transform: translateX(10px);
-  opacity: 0;
-}
+        transition: all .3s ease;
+    }
+
+    .slide-fade-leave-active {
+        transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    }
+
+    .slide-fade-enter,
+    .slide-fade-leave-to
+
+    /* .slide-fade-leave-active for below version 2.1.8 */
+        {
+        transform: translateX(10px);
+        opacity: 0;
+    }
 </style>
