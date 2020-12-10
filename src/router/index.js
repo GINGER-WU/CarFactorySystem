@@ -18,6 +18,9 @@ const CF_modifyfittings = () => import('@/views/carfiles/modify/modifyFittings')
 const CF_modifyworkers = () => import('@/views/carfiles/modify/modifyWorkers')
 const Modifyfittings = () => import('@/views/warehouse/modify/modifyFittings')
 const Modifyworkers = () => import('@/views/workers/modify/modifyWorker')
+const Indexmembers = () => import('@/views/members/indexMembers')
+const Newmember = () => import('@/views/members/newMember')
+const Modifymember = () => import('@/views/members/modify/modifyMember')
 
 
 
@@ -112,6 +115,21 @@ const routes = [
     component:Newworkers,
     name:'添加新员工'
   },
+  {
+    path:'/members',
+    component:Indexmembers,
+    name:'会员管理',
+    children:[{
+      path:'modifymember',
+      component:Modifymember,
+      name:'修改会员信息'
+    }]
+  },
+  {
+    path:'/newmember',
+    component:Newmember,
+    name:'新增会员信息'
+  }
 ]
 
 const router = new VueRouter({

@@ -1,4 +1,8 @@
 module.export = {
+    devServer:{
+        port:8081,
+        hotOnly: true, // 热更新
+    },
     configureWebpack: {
         resolve:{
             alise:{
@@ -7,6 +11,6 @@ module.export = {
                 'network': '@/network',
                 'views': '@/views',
             }
-        }
+        },
     }
 }

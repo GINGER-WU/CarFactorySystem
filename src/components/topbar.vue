@@ -35,11 +35,21 @@
                 <MenuItem to="/newworkers" name="newWorkers">添加员工信息</MenuItem>
             </MenuGroup>
         </Submenu>
+        <Submenu name="member">
+            <template slot="title">
+                <Icon size="25" type="ios-contacts-outline" />
+                会员管理
+            </template>
+            <MenuGroup title="会员操作">
+                <MenuItem to="/members" name="indexMembers">会员首页</MenuItem>
+                <MenuItem to="/newmember" name="newMember">添加会员信息</MenuItem>
+            </MenuGroup>
+        </Submenu>
         <MenuItem to="statistics" name="Statistics">
             <Icon size="25" type="ios-stats-outline" />
            利润统计
         </MenuItem>
-        <Button style="margin-left: 53%;" @click="value1 = true" type="primary">
+        <Button style="margin-left: 40%;" @click="value1 = true" type="primary">
             <Icon type="md-person" />
             user
         </Button>
