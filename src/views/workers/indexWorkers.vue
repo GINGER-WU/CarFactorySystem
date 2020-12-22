@@ -1,49 +1,105 @@
 <template>
-  <Table context-menu border :columns="columns" :data="carfiles" show-context-menu>
-    <template slot="contextMenu">
-      <DropdownItem @click.native="handleContextMenuEdit">修改</DropdownItem>
-      <DropdownItem @click.native="handleContextMenuDelete" style="color: #ed4014">删除</DropdownItem>
-    </template>
-  </Table>
+  <div>
+    <Button @click="handleDeleteBetch" type="error">批量删除</Button>
+    <br>
+    <br>
+    <Table context-menu border :columns="columns" :data="carfiles" show-context-menu @on-contextmenu="handleContextMenu"
+      @on-selection-change="handleSelectOne">
+      <template slot="contextMenu">
+        <DropdownItem @click.native="handleContextMenuEdit">修改</DropdownItem>
+        <DropdownItem @click.native="handleContextMenuDelete" style="color: #ed4014">删除</DropdownItem>
+      </template>
+    </Table>
+    <br>
+    <div style="text-align: right;">
+      <Page :total="total" :page-size="pageNum" @on-change="changePage" show-total />
+    </div>
+    <Drawer placement="left" :title="'员工ID：'+worker.workerID" v-model="flag" width="720" :mask-closable="true"
+      :styles="styles">
+      <Form :model="worker">
+        <Row :gutter="32">
+          <Col span="12">
+          <FormItem label="员工姓名" label-position="top">
+            <Input v-model="worker.workerName" placeholder="please enter user name" />
+          </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="员工性别" label-position="top">
+            <Input v-model="worker.workerSex" placeholder="please enter user name" />
+          </FormItem>
+          </Col>
+        </Row>
+        <Row :gutter="32">
+          <Col span="12">
+          <FormItem label="员工联系电话" label-position="top">
+            <Input v-model="worker.workerPhoneNumber" placeholder="please enter user name" />
+          </FormItem>
+          </Col>
+          <Col span="12">
+          <FormItem label="员工身份证号码" label-position="top">
+            <Input v-model="worker.workerIdcarNumber" placeholder="please enter user name" />
+          </FormItem>
+          </Col>
+        </Row>
+        <Row :gutter="32">
+          <Col span="12">
+          <FormItem label="员工上岗时间" label-position="top">
+            <DatePicker type="date" placeholder="Select date" @on-change="datechange" v-model="worker.firstworkTime"></DatePicker>
+          </FormItem>
+          </Col>
+        </Row>
+      </Form>
+      <div class="demo-drawer-footer">
+        <Button type="primary" @click="handleSubmit">提交</Button>
+        <Button style="margin-right: 8px" @click="flag = false">取消</Button>
+      </div>
+    </Drawer>
+  </div>
 </template>
 <script>
+  import * as Handle_worker from '@/network/worker'
+
   export default {
     data() {
       return {
+        current: 1,
+        total: 0,
+        pageNum: 5,
+        flag: false,
+        s_workers: [],
         columns: [
           {
-            title:'员工编号',
-            key:'workerNo'
+            type: 'selection',
+            width: 60,
+            align: 'center'
+          },
+          {
+            title: '员工编号',
+            key: 'workerID'
           },
           {
             title: '员工姓名',
-            key: 'name',
-            render: (h, params) => {
-              return h('div', [
-                h('Icon', {
-                  props: {
-                    type: 'person'
-                  }
-                }),
-                h('strong', params.row.name)
-              ]);
-            }
+            key: 'workerName',
           },
           {
             title: '员工性别',
-            key: 'sex'
+            key: 'workerSex'
           },
           {
             title: '员工联系电话',
-            key: 'phoneNumber'
+            key: 'workerPhoneNumber'
           },
           {
             title: '员工身份证号码',
-            key: 'idcardNumber'
+            key: 'workerIdcarNumber'
           },
           {
             title: '入职时间',
-            key: 'time'
+            key: 'firstworkTime'
+          },
+          {
+            title: '是否正在工作',
+            key: 'workingNumber'
           },
           {
             title: 'Action',
@@ -62,7 +118,7 @@
                   },
                   on: {
                     click: () => {
-                      this.show(params.index)
+                      this.handleModify(params.index)
                     }
                   }
                 }, '修改'),
@@ -83,49 +139,102 @@
         ],
         carfiles: [
           {
-            workerNo: '201001',
-            name: 'John Brown',
-            sex: '女',
-            phoneNumber: '13851211111',
-            idcardNumber: '44151211112321021',
-            time: '2020-11-29 16:40:04',
+            workerID: 0,
+            workerName: '',
+            workerSex: '',
+            workerPhoneNumber: '',
+            workerIdcarNumber: '',
+            firstworkTime: '',
           },
-          {
-            workerNo: '201002',
-            name: 'Jim Green',
-            sex: '男',
-            phoneNumber: '13851211221',
-            idcardNumber: '4415121334444421',
-            time: '2020-11-29 16:40:04',
-          },
-          {
-            workerNo: '201003',
-            name: 'Joe Black',
-            sex: '女',
-            phoneNumber: '1385121133311',
-            idcardNumber: '44151211112322231',
-            time: '2020-11-29 16:40:04',
-          },
-          {
-            workerNo: '201004',
-            name: 'Jon Snow',
-            sex: '女',
-            phoneNumber: '138512134555',
-            idcardNumber: '44151211113333441',
-            time: '2020-11-29 16:40:04',
-          }
-        ]
+        ],
+        styles: {
+          height: 'calc(100% - 55px)',
+          overflow: 'auto',
+          paddingBottom: '53px',
+          position: 'static'
+        },
+        worker: {
+          workerID: 0,
+          workerName: '',
+          workerSex: '',
+          workerPhoneNumber: '',
+          workerIdcarNumber: '',
+          firstworkTime: '',
+        },
       }
     },
+    created() {
+      Handle_worker.getWorkersData(this.current).then(res => {
+        this.total = res.data.data.total;
+        this.current = res.data.data.pageNum;
+        let array = [{}];
+        array = res.data.data.list;
+        this.carfiles = array;
+      })
+    },
     methods: {
-      show(index) {
-        this.$Modal.info({
-          title: 'User Info',
-          content: `Name：${this.carfiles[index].name}<br>Age：${this.carfiles[index].age}<br>Address：${this.carfiles[index].address}`
+      changePage(value) {
+        Handle_worker.getWorkersData(value).then(res => {
+          this.current = value;
+          let array = [{}];
+          array = res.data.data.list;
+          this.carfiles = array;
+        })
+      },
+      handleModify(index) {
+        this.worker = JSON.parse(JSON.stringify(this.carfiles[index]));
+        this.flag = true;
+      },
+      handleSubmit() {
+        let worker = JSON.stringify(this.worker);
+        Handle_worker.modifyWorkersData(worker).then(res => {
+          alert('修改成功');
+          Handle_worker.getWorkersData(this.current).then(res => {
+            let array = [{}];
+            array = res.data.data.list;
+            this.carfiles = array;
+          })
+          this.flag = false;
         })
       },
       remove(index) {
-        this.carfiles.splice(index, 1);
+        let id = this.carfiles[index].workerID;
+        Handle_worker.deleteWorkersDate(id).then(res => {
+          alert("删除成功");
+          history.go(0);
+        })
+      },
+      handleContextMenu(row) {
+        this.worker = JSON.parse(JSON.stringify(row));;
+      },
+      handleContextMenuEdit() {
+        this.flag = true;
+      },
+      handleContextMenuDelete() {
+        let id = this.worker.workerID;
+        Handle_worker.deleteWorkersDate(id).then(res => {
+          alert("删除成功");
+          history.go(0);
+        })
+      },
+      handleSelectOne(selection) {
+        this.s_workers = selection;
+      },
+      handleDeleteBetch() {
+        let ids = [];
+        for (let item of this.s_workers) {
+          ids.push(item.workerID);
+        }
+        let JSONids = JSON.stringify(ids);
+        JSONids = JSONids.substr(0, JSONids.length - 1);
+        JSONids = JSONids.substr(1, JSONids.length - 1);
+        Handle_worker.deleteWorkersDate(JSONids).then(res => {
+          alert("删除成功");
+          history.go(0);
+        })
+      },
+      datechange(date){
+        this.worker.firstworkTime = date;
       }
     }
   }

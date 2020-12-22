@@ -14,14 +14,14 @@
                     </Breadcrumb>
                     <br>
                     <Card>
-                        <div style="min-height: 720px;">
+                        <div style="min-height: 400px;">
                             <transition name="slide-fade">
                                 <router-view></router-view>
                             </transition>
                         </div>
                     </Card>
                 </Content>
-                <Footer class="layout-footer-center">2020~2120 &copy; WuGinger</Footer>
+                <Footer style="margin-top: 17%;" s class="layout-footer-center">2020~2120 &copy; WuGinger</Footer>
             </Layout>
         </div>
     </div>

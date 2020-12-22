@@ -13,37 +13,32 @@
           <Icon color="red" type="md-close" />去除</Button>
         <br>
         <Row>
-          <Col span="2">
+          <Col span="3">
           <FormItem label="员工姓名">
-            <Input v-model="item.name" placeholder="Enter something..."></Input>
+            <Input v-model="item.worker.workerName" placeholder="Enter something..."></Input>
           </FormItem>
           </Col>
-          <Col span="2">
+          <Col span="3">
           <FormItem label="员工性别">
-            <Select v-model="item.sex">
+            <Select v-model="item.worker.workerSex">
               <Option value="男">男</Option>
               <Option value="女">女</Option>
             </Select>
           </FormItem>
           </Col>
-          <Col span="4">
+          <Col span="5">
           <FormItem label="员工联系电话">
-            <Input v-model="item.phoneNumber" placeholder="Enter something..."></Input>
+            <Input v-model="item.worker.workerPhoneNumber" placeholder="Enter something..."></Input>
           </FormItem>
           </Col>
-          <Col span="4">
+          <Col span="5">
           <FormItem label="员工身份证号码">
-            <Input v-model="item.idcarNumber" placeholder="Enter something..."></Input>
+            <Input v-model="item.worker.workerIdcarNumber" placeholder="Enter something..."></Input>
           </FormItem>
           </Col>
-          <Col span="4">
+          <Col span="5">
           <FormItem label="入职时间">
-            <DatePicker type="date" placeholder="Select date" v-model="item.date"></DatePicker>
-          </FormItem>
-          </Col>
-          <Col span="4">
-          <FormItem label="薪资">
-            <Input v-model="item.salary" placeholder="Enter something..."></Input>
+            <DatePicker type="date" placeholder="Select date" v-model="item.worker.firstworkTime"></DatePicker>
           </FormItem>
           </Col>
         </Row>
@@ -52,6 +47,8 @@
   </div>
 </template>
 <script>
+  import * as Handle_worker from '@/network/worker'
+
   export default {
     data() {
       return {
@@ -59,14 +56,15 @@
         formDynamic: {
           items: [
             {
-              name: '',
-              sex: 0,
-              phoneNumber: '',
-              idcardNumber: '',
-              date: '',
               status: 1,
               index: 1,
-              salary: ''
+              worker:{
+                workerName: '',
+                workerSex: '',
+                workerPhoneNumber: '',
+                workerIdcarNumber: '',
+                firstworkTime: '',
+              }
             }
           ]
         },
@@ -74,26 +72,41 @@
     },
     methods: {
       handleSubmit(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.$Message.success('Success!');
-          } else {
-            this.$Message.error('Fail!');
-          }
-        })
-      },
-      handleReset(name) {
-        this.$refs[name].resetFields();
+        let wks = [{
+                workerName: '',
+                workerSex: '',
+                workerPhoneNumber: '',
+                workerIdcarNumber: '',
+                firstworkTime: '',
+        }]
+        for(let index in this.formDynamic.items){
+
+          let date = this.$moment(this.formDynamic.items[index].worker.firstworkTime).format("YYYY-MM-DD");
+          this.formDynamic.items[index].worker.firstworkTime = date;
+          wks[index]=this.formDynamic.items[index].worker;
+        }
+         let workers = JSON.stringify(wks);
+         Handle_worker.addWorkersData(wks).then(res => {
+           alert('添加成功');
+         })
       },
       handleAdd() {
         this.index++;
         this.formDynamic.items.push({
-          value: '',
           index: this.index,
-          status: 1
+          status: 1,
+          worker:{
+                workerID: 0,
+                workerName: '',
+                workerSex: '',
+                workerPhoneNumber: '',
+                workerIdcarNumber: '',
+                firstworkTime: '',
+              }
         });
       },
       handleRemove(index) {
+        this.formDynamic.items.splice(index,1);
         this.formDynamic.items[index].status = 0;
       }
     }

@@ -12,7 +12,7 @@
             </template>
             <MenuGroup title="档案操作">
                 <MenuItem to="/carfiles" name="indexFiles">档案首页</MenuItem>
-                <MenuItem to="/newcarfile" name="newFiles">创建新的档案</MenuItem>
+                <MenuItem to="/newcar" name="newFiles">创建新的档案</MenuItem>
             </MenuGroup>
         </Submenu>
         <Submenu name="warehouse">
