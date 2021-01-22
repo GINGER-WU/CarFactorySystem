@@ -126,8 +126,9 @@
           </div>
           <br>
           <p :style="pStyle">
-            <font size="5">总费用：{{carInfo.totalCost}}</font>
+            <font size="5">总费用：{{carInfo.totalCost}}元</font>
           </p>
+          <Button v-if="carInfo.finishService==null" @click="handleCheckOut" long size="large" type="success">结账</Button>
         </Drawer>
         <Drawer placement="left" :closable="false" width="840" v-model="AddPartsFlag">
           <mparts :carfileID="carInfo.carfileID"></mparts>
@@ -704,13 +705,18 @@
         this.AddPartsFlag = !this.AddPartsFlag;
       },
       handleContextMenuEdit() {
-
       },
       handleContextMenuDelete() {
 
       },
       handleDeleteBetch() {
 
+      },
+      handleCheckOut(){
+        Handle_carfiles.checkout(this.carInfo.carfileID).then(()=>{
+          alert("结账成功");
+          history.go(0);
+        })
       },
       changePage(value) {
         this.loading = true;

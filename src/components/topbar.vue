@@ -42,7 +42,6 @@
             </template>
             <MenuGroup title="会员操作">
                 <MenuItem to="/members" name="indexMembers">会员首页</MenuItem>
-                <MenuItem to="/newmember" name="newMember">添加会员信息</MenuItem>
             </MenuGroup>
         </Submenu>
         <MenuItem to="statistics" name="Statistics">

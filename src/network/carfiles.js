@@ -127,6 +127,15 @@ export function addPartsData(carfileList,carfileID){
     }
   })
 }
+export function checkout(carfileID){
+  return request({
+    method:'PUT',
+    url:'/carfiles/checkout',
+    params:{
+      carfileID
+    }
+  })
+}
 export function modifyMemberData(member,carfileID){
   return request({
     method:'PUT',
