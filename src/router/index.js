@@ -5,7 +5,6 @@ Vue.use(VueRouter)
 const Login = () => import('@/views/login')
 const Home = () => import('@/views/home')
 const Indexcarfiles = () => import('@/views/carfiles/indexCarfiles')
-const Statistics = () => import('@/views/statistics/statistics')
 const Indexwarehouse = () => import('@/views/warehouse/indexWarehouse')
 const Newfittings = () => import('@/views/warehouse/newFittings')
 const Indexworkers = () => import('@/views/workers/indexWorkers')
@@ -36,11 +35,6 @@ const routes = [
     path:'/home',
     component: Home,
     name:'首页'
-  },
-  {
-    path:'/statistics',
-    component: Statistics,
-    name:'利润统计'
   },
   {
     path:'/carfiles',

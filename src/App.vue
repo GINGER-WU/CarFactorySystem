@@ -15,13 +15,26 @@
                     <br>
                     <Card>
                         <div style="min-height: 400px;">
-                            <transition name="slide-fade">
+                            <transition name="fade">
                                 <router-view></router-view>
                             </transition>
                         </div>
                     </Card>
                 </Content>
-                <Footer style="margin-top: 17%;" s class="layout-footer-center">2020~2120 &copy; WuGinger</Footer>
+                <Footer class="layout-footer-center">
+                    <Tabs>
+                        <TabPane label="版权所有" icon="ios-at">
+                            <div>
+                                <Icon type="md-thumbs-up" size="30"/>forever &copy; Coder-Ginger<Icon type="md-thumbs-up" size="30"/>
+                            </div>
+                        </TabPane>
+                        <TabPane label="关于我们" icon="ios-bookmark">
+                            <div>
+                                <p><Icon type="md-walk" size="30"/>This is a Garbage Operation System.<Icon type="md-walk" size="30"/></p>
+                            </div>
+                        </TabPane>
+                    </Tabs>
+                </Footer>
             </Layout>
         </div>
     </div>
@@ -85,9 +98,11 @@
     .layout {
         border: 1px solid #d7dde4;
         background: #f5f7f9;
-        position: relative;
+        position: absolute;
+        display:flex;
         border-radius: 4px;
-        overflow: hidden;
+        height: 100%;
+        width: 100%;
     }
 
     .layout-logo {
@@ -111,20 +126,20 @@
         text-align: center;
     }
 
-    .slide-fade-enter-active {
-        transition: all .3s ease;
-    }
-
-    .slide-fade-leave-active {
-        transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-    }
-
-    .slide-fade-enter,
-    .slide-fade-leave-to
-
-    /* .slide-fade-leave-active for below version 2.1.8 */
-        {
-        transform: translateX(10px);
+    .fade-leave-to {
         opacity: 0;
+        transform: translate3d(0, -300px, 0);
+        position: absolute;
+        z-index: -10;
+    }
+
+    .fade-enter {
+        transform: translate3d(0, 300px, 0);
+        position: absolute;
+    }
+
+    .fade-leave-active,
+    .fade-enter-active {
+        transition: .5s all ease;
     }
 </style>

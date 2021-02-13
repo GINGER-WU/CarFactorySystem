@@ -130,8 +130,8 @@
           </p>
           <Button v-if="carInfo.finishService==null" @click="handleCheckOut" long size="large" type="success">结账</Button>
         </Drawer>
-        <Drawer placement="left" :closable="false" width="840" v-model="AddPartsFlag">
-          <mparts :carfileID="carInfo.carfileID"></mparts>
+        <Drawer v-if="AddPartsFlag" placement="left" :closable="false" width="840" v-model="AddPartsFlag">
+          <parts :plist="useParts" :cfid="carInfo.carfileID"></parts>
         </Drawer>
       </Content>
       <Footer>
@@ -143,6 +143,7 @@
   </div>
 </template>
 <script>
+  import parts from '@/components/drawerfittings'
   import * as Handle_carfiles from '@/network/carfiles'
   export default {
     data() {
@@ -291,6 +292,9 @@
           }
         ],
       }
+    },
+    components:{
+      parts
     },
     methods: {
       modifyDeleteWorker(index) {
@@ -703,6 +707,7 @@
       },
       handleAddParts(){
         this.AddPartsFlag = !this.AddPartsFlag;
+        console.log(this.carInfo.carfileID);
       },
       handleContextMenuEdit() {
       },

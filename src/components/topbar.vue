@@ -1,6 +1,6 @@
 <template >
     <div>
-    <Menu mode="horizontal" :theme="theme1" active-name="index">  
+    <Menu class="menu" mode="horizontal" :theme="theme1" active-name="index">  
         <MenuItem to="/home" name="index">
             <Icon size="25" type="ios-home-outline" />
             首页
@@ -44,11 +44,7 @@
                 <MenuItem to="/members" name="indexMembers">会员首页</MenuItem>
             </MenuGroup>
         </Submenu>
-        <MenuItem to="statistics" name="Statistics">
-            <Icon size="25" type="ios-stats-outline" />
-           利润统计
-        </MenuItem>
-        <Button style="margin-left: 40%;" @click="value1 = true" type="primary">
+        <Button style="position: absolute;margin:auto;right: 0;top: 0;bottom: 0;" @click="value1 = true" type="primary">
             <Icon type="md-person" />
             user
         </Button>
@@ -76,3 +72,8 @@
         },
     }
 </script>
+<style>
+    .menu{
+        position: absolute;
+    }
+</style>
