@@ -97,8 +97,10 @@
             <Poptip placement="right" width="100">
               <Button size="small" ghost type="primary">修改</Button>
               <div slot="content" style="text-align: center;">
-                <Button v-show="AddWorkerflag == false" @click="handleAddWorker" size="small" ghost type="success">添加</Button>
-                <Button v-show="AddWorkerflag == true" @click="handleAddWorker" size="small" ghost type="warning">隐藏</Button>
+                <Button v-show="AddWorkerflag == false" @click="handleAddWorker" size="small" ghost
+                  type="success">添加</Button>
+                <Button v-show="AddWorkerflag == true" @click="handleAddWorker" size="small" ghost
+                  type="warning">隐藏</Button>
                 &nbsp;
                 <Button @click="handleDeleteWorker" size="small" ghost type="error">删除</Button>
               </div>
@@ -140,7 +142,7 @@
             type="success">结账</Button>
         </Drawer>
         <Drawer placement="left" :closable="false" width="840" v-model="AddPartsFlag">
-          <parts :plist="useParts" :cfid="carInfo.carfileID" @click_submit="handle_submit"></parts>
+          <parts ref="childparts" :plist="useParts" :cfid="carInfo.carfileID" @click_submit="handle_submit"></parts>
         </Drawer>
       </Content>
       <Footer>
@@ -307,64 +309,70 @@
       parts
     },
     methods: {
-      handle_submit(item){
+      handle_submit(item) {
         this.useParts = this.useParts.concat(item);
+        let totalprice = 0;
+        for (let item of this.useParts) {
+          totalprice += item.useNumber * item.partsPrice
+        }
+        totalprice += this.carInfo.laborCost;
+        this.carInfo.totalCost = totalprice;
         this.AddPartsFlag = false;
         this.$Message["success"]({
-                        background: true,
-                        content: '添加成功'
-                      });
+          background: true,
+          content: '添加成功'
+        });
       },
-      handleClear(){
+      handleClear() {
         this.keywords = '';
         this.loading = true;
         Handle_carfiles.getCarfilesData(this.current, this.keywords).then(res => {
-        let item = [];
-        this.total = res.data.data.total;
-        this.current = res.data.data.pageNum;
-        this.carfiles = res.data.data.list;
-        let name = [];
-        let carbrand = [];
-        let i = 0;
-        for (let iterator of this.carfiles) {
-          Handle_carfiles.get_info(iterator.memberPhoneNumber, iterator.carNumber).then(res => {
-            name.push(res.data.data[0]);
-            carbrand.push(res.data.data[1]);
-          })
-          if (iterator.finishService != null) {
-            setTimeout(() => {
-              item.push({
-                carfileID: iterator.carfileID,
-                carNumber: iterator.carNumber,
-                carBrand: carbrand[i],
-                startService: iterator.startService,
-                memberPhoneNumber: iterator.memberPhoneNumber,
-                memberName: name[i],
-                status: '已结账'
-              });
-              i++;
-            }, 700)
+          let item = [];
+          this.total = res.data.data.total;
+          this.current = res.data.data.pageNum;
+          this.carfiles = res.data.data.list;
+          let name = [];
+          let carbrand = [];
+          let i = 0;
+          for (let iterator of this.carfiles) {
+            Handle_carfiles.get_info(iterator.memberPhoneNumber, iterator.carNumber).then(res => {
+              name.push(res.data.data[0]);
+              carbrand.push(res.data.data[1]);
+            })
+            if (iterator.finishService != null) {
+              setTimeout(() => {
+                item.push({
+                  carfileID: iterator.carfileID,
+                  carNumber: iterator.carNumber,
+                  carBrand: carbrand[i],
+                  startService: iterator.startService,
+                  memberPhoneNumber: iterator.memberPhoneNumber,
+                  memberName: name[i],
+                  status: '已结账'
+                });
+                i++;
+              }, 700)
+            }
+            else {
+              setTimeout(() => {
+                item.push({
+                  carfileID: iterator.carfileID,
+                  carNumber: iterator.carNumber,
+                  carBrand: carbrand[i],
+                  startService: iterator.startService,
+                  memberPhoneNumber: iterator.memberPhoneNumber,
+                  memberName: name[i],
+                  status: '未结账'
+                });
+                i++;
+              }, 700)
+            }
           }
-          else {
-            setTimeout(() => {
-              item.push({
-                carfileID: iterator.carfileID,
-                carNumber: iterator.carNumber,
-                carBrand: carbrand[i],
-                startService: iterator.startService,
-                memberPhoneNumber: iterator.memberPhoneNumber,
-                memberName: name[i],
-                status: '未结账'
-              });
-              i++;
-            }, 700)
-          }
-        }
-        setTimeout(() => {
-          this.loading = false;
-        }, 700)
-        this.showitem = item;
-      })
+          setTimeout(() => {
+            this.loading = false;
+          }, 700)
+          this.showitem = item;
+        })
       },
       handle_search() {
         this.loading = true;
@@ -430,7 +438,7 @@
         this.ld = true;
         Promise.all([Handle_carfiles.getCarInfo(this.showitem[index].carfileID),
         Handle_carfiles.getUseWorkers(this.showitem[index].carfileID),
-        Handle_carfiles.getUseParts(this.showitem[index].carfileID)]).then(res =>{
+        Handle_carfiles.getUseParts(this.showitem[index].carfileID)]).then(res => {
           this.carInfo = res[0].data.data;
           this.useWorker = res[1].data.data;
           this.useParts = res[2].data.data;
@@ -747,7 +755,7 @@
       },
       handleAddWorker() {
         Handle_carfiles.getWorkerList(1, 100).then((res) => {
-            this.workerList = res.data.data.list;
+          this.workerList = res.data.data.list;
         })
         this.AddWorkerflag = !this.AddWorkerflag;
       },
@@ -807,6 +815,12 @@
                       });
                       u_parts.splice(params.index, 1);
                       this.useParts = u_parts;
+                      let totalprice = 0;
+                      for (let item of this.useParts) {
+                        totalprice += item.useNumber * item.partsPrice
+                      }
+                      totalprice += this.carInfo.laborCost;
+                      this.carInfo.totalCost = totalprice;
                     })
                     this.$Modal.remove();
                   }
@@ -848,6 +862,7 @@
       },
       handleAddParts() {
         this.AddPartsFlag = !this.AddPartsFlag;
+        this.$refs["childparts"].init();
       },
       handleContextMenuEdit() {
       },

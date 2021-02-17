@@ -128,6 +128,32 @@
       }
     },
     methods: {
+      init(){
+        this.index = 0;
+        this.formDynamic = {
+          items: [
+            {
+              status: 0,
+              index: 1,
+              parts: {
+                partsID:0,
+                partsName: "",
+                usePartsCount: 0,
+                partsPrice: 0.0,
+                venderInfo: "",
+              }
+            }
+          ]
+        };
+        Handle_carfiles.getPartsData(1,10000).then(res => {
+        for (let item of res.data.data.list) {
+          this.$nextTick(() => {
+            item['is_show'] = true;
+          })
+        }
+        this.optionsList = res.data.data.list;
+      })
+      },
       handleSubmit() {
         let submitParts = [];
         let sendParts = [];
