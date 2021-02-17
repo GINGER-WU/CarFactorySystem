@@ -1,5 +1,4 @@
 import axios from 'axios'
-import QS from 'qs'
 
 export function request(config) {
     const instance = axios.create({

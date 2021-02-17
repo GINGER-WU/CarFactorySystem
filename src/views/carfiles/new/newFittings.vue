@@ -189,6 +189,10 @@
         }
         this.optionsList = res.data.data.list;
       })
+      this.$Message["success"]({
+        background: true,
+        content: '操作成功'
+      });
     },
   }
 </script>

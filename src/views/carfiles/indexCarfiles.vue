@@ -3,6 +3,13 @@
     <Layout>
       <Header style="background-color:transparent;">
         <Button @click="handleDeleteBetch" type="error">批量删除</Button>
+        <Poptip placement="right" width="400">
+          <Button style="margin-left: 5px;" type="success">搜索</Button>
+          <div slot="content">
+            <Input style="width: 70%;" v-model="keywords" search placeholder="输入关键字来搜索..." @on-search="handle_search" />
+            <Button style="margin-left: 5%" @click="handleClear" ghost type="primary">清除搜索</Button>
+          </div>
+        </Poptip>
       </Header>
       <Content style="height: 270px;">
         <Table :loading="loading" context-menu border :columns="columns" :data="showitem" show-context-menu>
@@ -90,11 +97,12 @@
             <Poptip placement="right" width="100">
               <Button size="small" ghost type="primary">修改</Button>
               <div slot="content" style="text-align: center;">
-                <Button @click="handleAddWorker" size="small" ghost type="success">添加</Button>
-                 &nbsp;
+                <Button v-show="AddWorkerflag == false" @click="handleAddWorker" size="small" ghost type="success">添加</Button>
+                <Button v-show="AddWorkerflag == true" @click="handleAddWorker" size="small" ghost type="warning">隐藏</Button>
+                &nbsp;
                 <Button @click="handleDeleteWorker" size="small" ghost type="error">删除</Button>
               </div>
-          </Poptip>
+            </Poptip>
           </p>
           <div v-if="AddWorkerflag">
             <Button @click="handleSubmitWorker" size="small" type="primary">确定</Button>
@@ -116,10 +124,10 @@
               <Button size="small" ghost type="primary">操作</Button>
               <div slot="content" style="text-align: center;">
                 <Button @click="handleAddParts" size="small" ghost type="success">添加</Button>
-                 &nbsp;
+                &nbsp;
                 <Button @click="handleModifyParts" size="small" ghost type="primary">修改</Button>
               </div>
-          </Poptip>
+            </Poptip>
           </p>
           <div class="demo-drawer-profile">
             <Table border :columns="columnsparts" :data="useParts"></Table>
@@ -128,10 +136,11 @@
           <p :style="pStyle">
             <font size="5">总费用：{{carInfo.totalCost}}元</font>
           </p>
-          <Button v-if="carInfo.finishService==null" @click="handleCheckOut" long size="large" type="success">结账</Button>
+          <Button v-if="carInfo.finishService==null" @click="handleCheckOut" long size="large"
+            type="success">结账</Button>
         </Drawer>
-        <Drawer v-if="AddPartsFlag" placement="left" :closable="false" width="840" v-model="AddPartsFlag">
-          <parts :plist="useParts" :cfid="carInfo.carfileID"></parts>
+        <Drawer placement="left" :closable="false" width="840" v-model="AddPartsFlag">
+          <parts :plist="useParts" :cfid="carInfo.carfileID" @click_submit="handle_submit"></parts>
         </Drawer>
       </Content>
       <Footer>
@@ -148,10 +157,11 @@
   export default {
     data() {
       return {
-        AddPartsFlag:false,
-        submitList:[],
-        workerList:[],
-        AddWorkerflag:false,
+        AddPartsFlag: false,
+        keywords: '',
+        submitList: [],
+        workerList: [],
+        AddWorkerflag: false,
         loading: true,
         current: 1,
         total: 0,
@@ -293,28 +303,151 @@
         ],
       }
     },
-    components:{
+    components: {
       parts
     },
     methods: {
+      handle_submit(item){
+        this.useParts = this.useParts.concat(item);
+        this.AddPartsFlag = false;
+        this.$Message["success"]({
+                        background: true,
+                        content: '添加成功'
+                      });
+      },
+      handleClear(){
+        this.keywords = '';
+        this.loading = true;
+        Handle_carfiles.getCarfilesData(this.current, this.keywords).then(res => {
+        let item = [];
+        this.total = res.data.data.total;
+        this.current = res.data.data.pageNum;
+        this.carfiles = res.data.data.list;
+        let name = [];
+        let carbrand = [];
+        let i = 0;
+        for (let iterator of this.carfiles) {
+          Handle_carfiles.get_info(iterator.memberPhoneNumber, iterator.carNumber).then(res => {
+            name.push(res.data.data[0]);
+            carbrand.push(res.data.data[1]);
+          })
+          if (iterator.finishService != null) {
+            setTimeout(() => {
+              item.push({
+                carfileID: iterator.carfileID,
+                carNumber: iterator.carNumber,
+                carBrand: carbrand[i],
+                startService: iterator.startService,
+                memberPhoneNumber: iterator.memberPhoneNumber,
+                memberName: name[i],
+                status: '已结账'
+              });
+              i++;
+            }, 700)
+          }
+          else {
+            setTimeout(() => {
+              item.push({
+                carfileID: iterator.carfileID,
+                carNumber: iterator.carNumber,
+                carBrand: carbrand[i],
+                startService: iterator.startService,
+                memberPhoneNumber: iterator.memberPhoneNumber,
+                memberName: name[i],
+                status: '未结账'
+              });
+              i++;
+            }, 700)
+          }
+        }
+        setTimeout(() => {
+          this.loading = false;
+        }, 700)
+        this.showitem = item;
+      })
+      },
+      handle_search() {
+        this.loading = true;
+        Handle_carfiles.getCarfilesData(1, this.keywords).then(res => {
+          if (res.data.code === "500") {
+            this.total = 0;
+            this.current = 1;
+            this.carfiles = [];
+            this.showitem = [];
+          }
+          else {
+            let item = [];
+            this.total = res.data.data.total;
+            this.current = res.data.data.pageNum;
+            this.carfiles = res.data.data.list;
+            let name = [];
+            let carbrand = [];
+            let i = 0;
+            for (let iterator of this.carfiles) {
+              Handle_carfiles.get_info(iterator.memberPhoneNumber, iterator.carNumber).then(res => {
+                name.push(res.data.data[0]);
+                carbrand.push(res.data.data[1]);
+              })
+              if (iterator.finishService != null) {
+                setTimeout(() => {
+                  item.push({
+                    carfileID: iterator.carfileID,
+                    carNumber: iterator.carNumber,
+                    carBrand: carbrand[i],
+                    startService: iterator.startService,
+                    memberPhoneNumber: iterator.memberPhoneNumber,
+                    memberName: name[i],
+                    status: '已结账'
+                  });
+                  i++;
+                }, 700)
+              }
+              else {
+                setTimeout(() => {
+                  item.push({
+                    carfileID: iterator.carfileID,
+                    carNumber: iterator.carNumber,
+                    carBrand: carbrand[i],
+                    startService: iterator.startService,
+                    memberPhoneNumber: iterator.memberPhoneNumber,
+                    memberName: name[i],
+                    status: '未结账'
+                  });
+                  i++;
+                }, 700)
+              }
+            }
+            this.showitem = item;
+          }
+          setTimeout(() => {
+            this.loading = false;
+          }, 700)
+        })
+      },
       modifyDeleteWorker(index) {
-        console.log(index);
       },
       show(index) {
         this.ld = true;
-        Handle_carfiles.getCarInfo(this.showitem[index].carfileID).then(res => {
-          this.carInfo = res.data.data;
-        }).then(res => {
-          Handle_carfiles.getUseWorkers(this.showitem[index].carfileID).then(res => {
-            this.useWorker = res.data.data;
-          })
-        }).then(res => {
-          Handle_carfiles.getUseParts(this.showitem[index].carfileID).then(res => {
-            this.$nextTick(()=>{
-              this.useParts = res.data.data;
-            })
-          })
+        Promise.all([Handle_carfiles.getCarInfo(this.showitem[index].carfileID),
+        Handle_carfiles.getUseWorkers(this.showitem[index].carfileID),
+        Handle_carfiles.getUseParts(this.showitem[index].carfileID)]).then(res =>{
+          this.carInfo = res[0].data.data;
+          this.useWorker = res[1].data.data;
+          this.useParts = res[2].data.data;
         })
+        // Handle_carfiles.getCarInfo(this.showitem[index].carfileID).then(res => {
+        //   this.carInfo = res.data.data;
+        // }).then(res => {
+        //   Handle_carfiles.getUseWorkers(this.showitem[index].carfileID).then(res => {
+        //     this.useWorker = res.data.data;
+        //   })
+        // }).then(res => {
+        //   Handle_carfiles.getUseParts(this.showitem[index].carfileID).then(res => {
+        //     this.$nextTick(() => {
+        //       this.useParts = res.data.data;
+        //     })
+        //   })
+        // })
         setTimeout(() => {
           this.flag = true;
         }, 500)
@@ -374,6 +507,8 @@
           },
           onOk() {
             let JSONmodifyMember = JSON.stringify(modifyMember);
+            this.carInfo.memberName = modifyMember.memberName;
+            this.carInfo.memberPhoneNumeber;
             Handle_carfiles.modifyMemberData(JSONmodifyMember, that.carInfo.carfileID).then(() => {
               alert('修改成功');
               history.go(0);
@@ -582,7 +717,10 @@
                 on: {
                   click: () => {
                     Handle_carfiles.deleteWorkerData(u_worker[params.index].workerID, this.carInfo.carfileID).then(() => {
-                      alert('删除成功');
+                      this.$Message["success"]({
+                        background: true,
+                        content: '删除成功'
+                      });
                       u_worker.splice(params.index, 1);
                       this.useWorker = u_worker;
                     })
@@ -608,35 +746,32 @@
         })
       },
       handleAddWorker() {
-        Handle_carfiles.getWorkerList(1,100).then((res)=>{
-        this.$nextTick(() => {
-        this.workerList = res.data.data.list;
+        Handle_carfiles.getWorkerList(1, 100).then((res) => {
+            this.workerList = res.data.data.list;
         })
-      })
         this.AddWorkerflag = !this.AddWorkerflag;
       },
       handleSubmitWorker() {
         let JSONids = JSON.stringify(this.submitList);
-        JSONids = JSONids.substr(0,JSONids.length-1);
-        JSONids = JSONids.substr(1,JSONids.length-1);
-        Handle_carfiles.addWorkerData(JSONids,this.carInfo.carfileID).then(()=>{
+        JSONids = JSONids.substr(0, JSONids.length - 1);
+        JSONids = JSONids.substr(1, JSONids.length - 1);
+        Handle_carfiles.addWorkerData(JSONids, this.carInfo.carfileID).then(() => {
           alert('添加成功');
           history.go(0);
         })
-        console.log(JSONids);
       },
-      handleModifyParts(){
+      handleModifyParts() {
         let that = this;
         let c_parts = JSON.parse(JSON.stringify(this.columnsparts));
         let u_parts = JSON.parse(JSON.stringify(this.useParts));
-        c_parts.splice(3,1,{
+        c_parts.splice(3, 1, {
           title: '使用数量',
           key: 'useNumber',
           width: 70,
           align: 'center',
           render: (h, params) => {
             return h('div', [
-            h('Input', {
+              h('Input', {
                 props: {
                   value: u_parts[params.index].useNumber,
                   autofocus: true,
@@ -666,7 +801,10 @@
                 on: {
                   click: () => {
                     Handle_carfiles.deletePartsData(u_parts[params.index].partsID, this.carInfo.carfileID).then(() => {
-                      alert('删除成功');
+                      this.$Message["success"]({
+                        background: true,
+                        content: '删除成功'
+                      });
                       u_parts.splice(params.index, 1);
                       this.useParts = u_parts;
                     })
@@ -689,25 +827,27 @@
               })
             ])
           },
-          onOk(){
+          onOk() {
             let submitList = [];
             for (let iterator of u_parts) {
               submitList.push({
-                partsID:iterator.partsID,
-                usePartsCount:iterator.useNumber
+                partsID: iterator.partsID,
+                usePartsCount: iterator.useNumber
               })
             }
             let JSONsubmitList = JSON.stringify(submitList);
-            Handle_carfiles.modifyUseNumberData(JSONsubmitList, that.carInfo.carfileID).then(()=>{
-              alert('修改成功');
+            Handle_carfiles.modifyUseNumberData(JSONsubmitList, that.carInfo.carfileID).then(() => {
+              this.$Message["success"]({
+                background: true,
+                content: '修改成功'
+              });
               that.useParts = u_parts;
             })
           }
         })
       },
-      handleAddParts(){
+      handleAddParts() {
         this.AddPartsFlag = !this.AddPartsFlag;
-        console.log(this.carInfo.carfileID);
       },
       handleContextMenuEdit() {
       },
@@ -717,15 +857,15 @@
       handleDeleteBetch() {
 
       },
-      handleCheckOut(){
-        Handle_carfiles.checkout(this.carInfo.carfileID).then(()=>{
+      handleCheckOut() {
+        Handle_carfiles.checkout(this.carInfo.carfileID).then(() => {
           alert("结账成功");
           history.go(0);
         })
       },
       changePage(value) {
         this.loading = true;
-        Handle_carfiles.getCarfilesData(value).then(res => {
+        Handle_carfiles.getCarfilesData(value, this.keywords).then(res => {
           this.current = value;
           let item = [];
           this.total = res.data.data.total;
@@ -776,7 +916,7 @@
       },
     },
     created() {
-      Handle_carfiles.getCarfilesData(this.current).then(res => {
+      Handle_carfiles.getCarfilesData(this.current, this.keywords).then(res => {
         let item = [];
         this.total = res.data.data.total;
         this.current = res.data.data.pageNum;

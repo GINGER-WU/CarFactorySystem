@@ -1,10 +1,11 @@
 import {request} from '@/network/request'
 
-export function getCarfilesData(page){
+export function getCarfilesData(page,keywords){
   return request({
     url:'/carfiles/selectcarfiles',
     params:{
-      page
+      page,
+      keywords
     }
   })
 }
@@ -64,7 +65,8 @@ export function getWorkerList(page,size){
     url:'/worker/showworkers',
     params:{
       page,
-      size
+      size,
+      keywords:''
     }
   })
 }
@@ -73,7 +75,8 @@ export function getPartsData(page,size){
     url:'/parts/showparts',
     params:{
       page,
-      size
+      size,
+      keywords:''
     }
   })
 }

@@ -1,10 +1,11 @@
 import {request} from '@/network/request'
 
-export function getMembersData(page){
+export function getMembersData(page,keywords){
   return request({
     url:'/member/showmembers',
     params:{
-      page
+      page,
+      keywords
     }
   })
 }

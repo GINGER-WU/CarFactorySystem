@@ -42,6 +42,10 @@
           })
         })
       }
+      this.$Message["success"]({
+        background: true,
+        content: '操作成功'
+      });
     },
     methods: {
       handleNext(){

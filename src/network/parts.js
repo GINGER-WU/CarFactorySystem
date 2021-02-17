@@ -1,10 +1,11 @@
 import {request} from '@/network/request'
 
-export function getPartsData(page){
+export function getPartsData(page,keywords){
   return request({
     url:'/parts/showparts',
     params:{
-      page
+      page,
+      keywords
     }
   })
 }

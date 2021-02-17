@@ -1,6 +1,13 @@
 <template>
   <div>
     <Button @click="handleDeleteBetch" type="error">批量删除</Button>
+    <Poptip placement="right" width="400">
+      <Button style="margin-left: 5px;" type="success">搜索</Button>
+      <div slot="content">
+        <Input style="width: 70%;" v-model="keywords" search placeholder="输入关键字来搜索..." @on-search="handle_search" />
+        <Button style="margin-left: 5%" @click="handleClear" ghost type="primary">清除搜索</Button>
+      </div>
+    </Poptip>
     <br>
     <br>
     <Table context-menu border :columns="columns" :data="carfiles" show-context-menu @on-contextmenu="handleContextMenu"
@@ -44,7 +51,8 @@
         <Row :gutter="32">
           <Col span="12">
           <FormItem label="员工上岗时间" label-position="top">
-            <DatePicker type="date" placeholder="Select date" @on-change="datechange" v-model="worker.firstworkTime"></DatePicker>
+            <DatePicker type="date" placeholder="Select date" @on-change="datechange" v-model="worker.firstworkTime">
+            </DatePicker>
           </FormItem>
           </Col>
         </Row>
@@ -62,6 +70,7 @@
   export default {
     data() {
       return {
+        keywords: '',
         current: 1,
         total: 0,
         pageNum: 5,
@@ -164,7 +173,7 @@
       }
     },
     created() {
-      Handle_worker.getWorkersData(this.current).then(res => {
+      Handle_worker.getWorkersData(this.current, this.keywords).then(res => {
         this.total = res.data.data.total;
         this.current = res.data.data.pageNum;
         let array = [{}];
@@ -173,6 +182,31 @@
       })
     },
     methods: {
+      handleClear(){
+        this.keywords = '';
+        Handle_worker.getWorkersData(this.current, this.keywords).then(res => {
+        this.total = res.data.data.total;
+        this.current = res.data.data.pageNum;
+        let array = [{}];
+        array = res.data.data.list;
+        this.carfiles = array;
+      })
+      },
+      handle_search() {
+        Handle_worker.getWorkersData(this.current, this.keywords).then(res => {
+          if (res.data.code == "500") {
+            this.total = 0;
+            this.current = 1;
+            this.carfiles = [];
+          } else {
+            this.total = res.data.data.total;
+            this.current = res.data.data.pageNum;
+            let array = [{}];
+            array = res.data.data.list;
+            this.carfiles = array;
+          }
+        })
+      },
       changePage(value) {
         Handle_worker.getWorkersData(value).then(res => {
           this.current = value;
@@ -233,7 +267,7 @@
           history.go(0);
         })
       },
-      datechange(date){
+      datechange(date) {
         this.worker.firstworkTime = date;
       }
     }

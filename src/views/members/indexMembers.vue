@@ -1,6 +1,13 @@
 <template>
   <div>
     <Button @click="handleDeleteBetch" type="error">批量删除</Button>
+    <Poptip placement="right" width="400">
+      <Button style="margin-left: 5px;" type="success">搜索</Button>
+      <div slot="content">
+        <Input style="width: 70%;" v-model="keywords" search placeholder="输入关键字来搜索..." @on-search="handle_search" />
+        <Button style="margin-left: 5%" @click="handleClear" ghost type="primary">清除搜索</Button>
+      </div>
+    </Poptip>
     <br>
     <br>
     <Table context-menu border :columns="columns" :data="carfiles" show-context-menu @on-contextmenu="handleContextMenu"
@@ -21,6 +28,7 @@
   export default {
     data() {
       return {
+        keywords:'',
         current: 1,
         total: 0,
         pageNum: 5,
@@ -91,7 +99,7 @@
       }
     },
     created() {
-      Handle_member.getMembersData(this.current).then(res => {
+      Handle_member.getMembersData(this.current,this.keywords).then(res => {
         this.total = res.data.data.total;
         this.current = res.data.data.pageNum;
         let array = [{}];
@@ -100,8 +108,34 @@
       })
     },
     methods: {
+      handleClear(){
+        this.keywords = '';
+        Handle_member.getMembersData(this.current,this.keywords).then(res => {
+        this.total = res.data.data.total;
+        this.current = res.data.data.pageNum;
+        let array = [{}];
+        array = res.data.data.list;
+        this.carfiles = array;
+      })
+      },
+      handle_search(){
+        Handle_member.getMembersData(1,this.keywords).then(res => {
+          if(res.data.code == "500"){
+            this.carfiles = [];
+            this.current = 1;
+            this.total = 0;
+          }
+          else{
+            this.total = res.data.data.total;
+        this.current = 1;
+        let array = [{}];
+        array = res.data.data.list;
+        this.carfiles = array;
+          }
+      })
+      },
       changePage(value) {
-        Handle_member.getMembersData(value).then(res => {
+        Handle_member.getMembersData(value,this.keywords).then(res => {
           this.current = value;
           let array = [{}];
           array = res.data.data.list;

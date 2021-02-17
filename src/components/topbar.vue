@@ -44,19 +44,6 @@
                 <MenuItem to="/members" name="indexMembers">会员首页</MenuItem>
             </MenuGroup>
         </Submenu>
-        <Button style="position: absolute;margin:auto;right: 0;top: 0;bottom: 0;" @click="value1 = true" type="primary">
-            <Icon type="md-person" />
-            user
-        </Button>
-        <Drawer title="用户信息" :closable="false" v-model="value1">
-            <div style="text-align: center;" class="demo-avatar">
-                <Avatar :style="{background: color}" size="100">{{ user }}</Avatar>
-            </div>
-            <br>
-            <div style="text-align: center;">
-                <a>注销</a>
-            </div>
-        </Drawer>
     </Menu>
     </div>
 </template>

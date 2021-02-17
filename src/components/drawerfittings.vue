@@ -57,7 +57,6 @@
             }
           ]
         },
-        carfileID:this.cfid,
         optionsList: [],
         showList:[],
         columns: [
@@ -130,19 +129,25 @@
     },
     methods: {
       handleSubmit() {
-        console.log(this.carfileID)
         let submitParts = [];
+        let sendParts = [];
         for(let item of this.formDynamic.items){
           if(item.status==1){
             submitParts.push({
               partsID: item.parts.partsID,
               usePartsCount: item.parts.usePartsCount
             })
+            sendParts.push({
+              partsID: item.parts.partsID,
+              partsName: item.parts.partsName,
+              partsPrice: item.parts.partsPrice,
+              useNumber: item.parts.usePartsCount,
+            })
           }
         }
         let JSONparts = JSON.stringify(submitParts);
-        Handle_carfiles.addPartsData(JSONparts,this.carfileID).then(()=>{
-          history.go(0);
+        Handle_carfiles.addPartsData(JSONparts,this.cfid).then(()=>{
+          this.$emit('click_submit',sendParts);
         })
       },
       handleAdd() {
@@ -197,7 +202,7 @@
       }
     },
     created() {
-      Handle_carfiles.getPartsData(1, 1000).then(res => {
+      Handle_carfiles.getPartsData(1,10000).then(res => {
         for (let item of res.data.data.list) {
           this.$nextTick(() => {
             item['is_show'] = true;
