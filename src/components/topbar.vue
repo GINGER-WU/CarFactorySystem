@@ -1,7 +1,7 @@
 <template >
     <div>
     <Menu class="menu" mode="horizontal" :theme="theme1" active-name="index">  
-        <MenuItem to="/home" name="index">
+        <MenuItem to="/home" name="/home">
             <Icon size="25" type="ios-home-outline" />
             首页
         </MenuItem>
@@ -11,8 +11,8 @@
                 汽车档案
             </template>
             <MenuGroup title="档案操作">
-                <MenuItem to="/carfiles" name="indexFiles">档案首页</MenuItem>
-                <MenuItem to="/newcar" name="newFiles">创建新的档案</MenuItem>
+                <MenuItem to="/carfiles" name="/carfiles">档案首页</MenuItem>
+                <MenuItem to="/newcar" name="/newcar">创建新的档案</MenuItem>
             </MenuGroup>
         </Submenu>
         <Submenu name="warehouse">
@@ -21,8 +21,8 @@
                 配件仓库
             </template>
             <MenuGroup title="配件操作">
-                <MenuItem to="/warehouse" name="indexWarehouse">仓库首页</MenuItem>
-                <MenuItem to="/newfittings" name="newFittings">配件入库</MenuItem>
+                <MenuItem to="/warehouse" name="/warehouse">仓库首页</MenuItem>
+                <MenuItem to="/newfittings" name="/newfittings">配件入库</MenuItem>
             </MenuGroup>
         </Submenu>
         <Submenu name="worker">
@@ -31,8 +31,8 @@
                 员工管理
             </template>
             <MenuGroup title="员工操作">
-                <MenuItem to="/workers" name="indexWorkers">员工首页</MenuItem>
-                <MenuItem to="/newworkers" name="newWorkers">添加员工信息</MenuItem>
+                <MenuItem to="/workers" name="/workers">员工首页</MenuItem>
+                <MenuItem to="/newworkers" name="/newworkers">添加员工信息</MenuItem>
             </MenuGroup>
         </Submenu>
         <Submenu name="member">
@@ -41,7 +41,7 @@
                 会员管理
             </template>
             <MenuGroup title="会员操作">
-                <MenuItem to="/members" name="indexMembers">会员首页</MenuItem>
+                <MenuItem to="/members" name="/members">会员首页</MenuItem>
             </MenuGroup>
         </Submenu>
     </Menu>

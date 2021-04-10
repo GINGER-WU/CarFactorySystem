@@ -88,6 +88,8 @@
          let workers = JSON.stringify(wks);
          Handle_worker.addWorkersData(wks).then(res => {
            alert('添加成功');
+           this.$router.push('/workers');
+           history.go(0);
          })
       },
       handleAdd() {

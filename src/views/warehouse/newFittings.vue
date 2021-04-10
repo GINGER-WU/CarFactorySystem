@@ -74,6 +74,8 @@
         let parts = JSON.stringify(pts);
         Handle_part.addPartsData(pts).then(res => {
           alert('添加成功');
+          this.$router.push('/warehouse');
+          history.go(0);
         })
       },
       handleAdd() {

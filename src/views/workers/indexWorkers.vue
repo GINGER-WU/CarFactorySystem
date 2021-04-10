@@ -208,7 +208,7 @@
         })
       },
       changePage(value) {
-        Handle_worker.getWorkersData(value).then(res => {
+        Handle_worker.getWorkersData(value, this.keywords).then(res => {
           this.current = value;
           let array = [{}];
           array = res.data.data.list;
